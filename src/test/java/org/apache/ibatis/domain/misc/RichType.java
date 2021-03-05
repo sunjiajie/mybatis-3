@@ -67,4 +67,15 @@ public class RichType {
   public void setRichMap(Map richMap) {
     this.richMap = richMap;
   }
+
+  @Override
+  public String toString() {
+    return "RichType{" +
+      "richType=" + richType +
+      ", richField='" + richField + '\'' +
+      ", richProperty='" + richProperty + '\'' +
+      ", richMap=" + richMap +
+      ", richList=" + richList +
+      '}';
+  }
 }

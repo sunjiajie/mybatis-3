@@ -15,16 +15,17 @@
  */
 package org.apache.ibatis.transaction;
 
+import org.apache.ibatis.session.TransactionIsolationLevel;
+
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.util.Properties;
 
-import javax.sql.DataSource;
-
-import org.apache.ibatis.session.TransactionIsolationLevel;
-
 /**
- * Creates {@link Transaction} instances.
  *
+ * MyBatis提供了两种事务管理器，分别为JdbcTransaction和ManagedTransaction。
+ * 其中，JdbcTransaction是使用JDBC中的Connection对象实现事务管理的，而ManagedTransaction表示事务由外部容器管理。
+ * 这两种事务管理器分别由对应的工厂类 JdbcTransactionFactory 和 ManagedTransactionFactory 创建。
  * @author Clinton Begin
  */
 public interface TransactionFactory {

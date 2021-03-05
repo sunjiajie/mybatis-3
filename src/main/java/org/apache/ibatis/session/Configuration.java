@@ -15,18 +15,6 @@
  */
 package org.apache.ibatis.session;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.function.BiFunction;
-
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.builder.CacheRefResolver;
 import org.apache.ibatis.builder.IncompleteElementException;
@@ -42,11 +30,7 @@ import org.apache.ibatis.cache.impl.PerpetualCache;
 import org.apache.ibatis.datasource.jndi.JndiDataSourceFactory;
 import org.apache.ibatis.datasource.pooled.PooledDataSourceFactory;
 import org.apache.ibatis.datasource.unpooled.UnpooledDataSourceFactory;
-import org.apache.ibatis.executor.BatchExecutor;
-import org.apache.ibatis.executor.CachingExecutor;
-import org.apache.ibatis.executor.Executor;
-import org.apache.ibatis.executor.ReuseExecutor;
-import org.apache.ibatis.executor.SimpleExecutor;
+import org.apache.ibatis.executor.*;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.loader.ProxyFactory;
 import org.apache.ibatis.executor.loader.cglib.CglibProxyFactory;
@@ -66,13 +50,7 @@ import org.apache.ibatis.logging.log4j2.Log4j2Impl;
 import org.apache.ibatis.logging.nologging.NoLoggingImpl;
 import org.apache.ibatis.logging.slf4j.Slf4jImpl;
 import org.apache.ibatis.logging.stdout.StdOutImpl;
-import org.apache.ibatis.mapping.BoundSql;
-import org.apache.ibatis.mapping.Environment;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.ParameterMap;
-import org.apache.ibatis.mapping.ResultMap;
-import org.apache.ibatis.mapping.ResultSetType;
-import org.apache.ibatis.mapping.VendorDatabaseIdProvider;
+import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.parsing.XNode;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.plugin.InterceptorChain;
@@ -94,6 +72,9 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeAliasRegistry;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
+
+import java.util.*;
+import java.util.function.BiFunction;
 
 /**
  * @author Clinton Begin
@@ -146,23 +127,53 @@ public class Configuration {
    */
   protected Class<?> configurationFactory;
 
+  /**
+   * 用于注册Mapper接口信息，建立Mapper接口的Class对象和MapperProxyFactory对象之间的关系，其中MapperProxyFactory对象用于创建Mapper动态代理对象。
+   */
   protected final MapperRegistry mapperRegistry = new MapperRegistry(this);
   protected final InterceptorChain interceptorChain = new InterceptorChain();
+
+  /**
+   * 用于注册所有的TypeHandler，并建立Jdbc类型、JDBC类型与TypeHandler之间的对应关系。
+   */
   protected final TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry(this);
   protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
   protected final LanguageDriverRegistry languageRegistry = new LanguageDriverRegistry();
 
+  /**
+   * MappedStatement对象描述<insert|select|update|delete>等标签或者通过@Select、@Delete、@Update、@Insert等注解配置的SQL信息。
+   * MyBatis将所有的MappedStatement对象注册到该属性中，其中Key为Mapper的Id，Value为MappedStatement对象。
+   */
   protected final Map<String, MappedStatement> mappedStatements = new StrictMap<MappedStatement>("Mapped Statements collection")
       .conflictMessageProducer((savedValue, targetValue) ->
           ". please check " + savedValue.getResource() + " and " + targetValue.getResource());
+
+  /**
+   * 用于注册Mapper中配置的所有缓存信息，其中Key为Cache的Id，也就是Mapper的命名空间，Value为Cache对象。
+   */
   protected final Map<String, Cache> caches = new StrictMap<>("Caches collection");
   protected final Map<String, ResultMap> resultMaps = new StrictMap<>("Result Maps collection");
   protected final Map<String, ParameterMap> parameterMaps = new StrictMap<>("Parameter Maps collection");
+
+  /**
+   * 用于注册KeyGenerator，KeyGenerator是MyBatis的主键生成器，MyBatis中提供了3种KeyGenerator，
+   * 即Jdbc3KeyGenerator（数据库自增主键）、NoKeyGenerator（无自增主键）、SelectKeyGenerator（通过select语句查询自增主键，例如oracle的sequence）。
+   */
   protected final Map<String, KeyGenerator> keyGenerators = new StrictMap<>("Key Generators collection");
 
+  /**
+   * 用于注册所有Mapper XML配置文件路径。
+   */
   protected final Set<String> loadedResources = new HashSet<>();
+
+  /**
+   * 用于注册Mapper中通过<sql>标签配置的SQL片段，Key为SQL片段的Id，Value为MyBatis封装的表示XML节点的XNode对象。
+   */
   protected final Map<String, XNode> sqlFragments = new StrictMap<>("XML fragments parsed from previous mappers");
 
+  /**
+   * 解析出错的对象
+   */
   protected final Collection<XMLStatementBuilder> incompleteStatements = new LinkedList<>();
   protected final Collection<CacheRefResolver> incompleteCacheRefs = new LinkedList<>();
   protected final Collection<ResultMapResolver> incompleteResultMaps = new LinkedList<>();
@@ -967,6 +978,10 @@ public class Configuration {
     }
   }
 
+  /**
+   * StrictMap 对 重复的 key 会直接报错
+   * @param <V>
+   */
   protected static class StrictMap<V> extends HashMap<String, V> {
 
     private static final long serialVersionUID = -4950446264854982944L;

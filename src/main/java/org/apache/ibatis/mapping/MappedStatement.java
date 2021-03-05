@@ -15,10 +15,6 @@
  */
 package org.apache.ibatis.mapping;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -27,6 +23,10 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Clinton Begin
@@ -40,11 +40,23 @@ public final class MappedStatement {
   private Integer timeout;
   private StatementType statementType;
   private ResultSetType resultSetType;
+
+  /**
+   * 解析<select|update|insert|delete>，将SQL语句配置信息解析为SqlSource对象
+   */
   private SqlSource sqlSource;
+
+  /**
+   * 二级缓存实例
+   */
   private Cache cache;
   private ParameterMap parameterMap;
   private List<ResultMap> resultMaps;
   private boolean flushCacheRequired;
+
+  /**
+   * 是否使用二级缓存
+   */
   private boolean useCache;
   private boolean resultOrdered;
   private SqlCommandType sqlCommandType;

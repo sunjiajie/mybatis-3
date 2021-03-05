@@ -15,20 +15,16 @@
  */
 package org.apache.ibatis.reflection;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.ibatis.domain.blog.Author;
 import org.apache.ibatis.domain.blog.Section;
 import org.apache.ibatis.domain.misc.CustomBeanWrapper;
 import org.apache.ibatis.domain.misc.CustomBeanWrapperFactory;
 import org.apache.ibatis.domain.misc.RichType;
 import org.junit.jupiter.api.Test;
+
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class MetaObjectTest {
 
@@ -38,6 +34,7 @@ class MetaObjectTest {
     MetaObject meta = SystemMetaObject.forObject(rich);
     meta.setValue("richField", "foo");
     assertEquals("foo", meta.getValue("richField"));
+    System.out.println(rich);
   }
 
   @Test
