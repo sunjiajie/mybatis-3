@@ -15,21 +15,15 @@
  */
 package org.apache.ibatis.reflection;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.binding.MapperMethod.ParamMap;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.*;
 
 public class ParamNameResolver {
 
@@ -56,14 +50,21 @@ public class ParamNameResolver {
 
   public ParamNameResolver(Configuration config, Method method) {
     this.useActualParamName = config.isUseActualParamName();
+
+    // 获取参数列表中每个参数的类型
     final Class<?>[] paramTypes = method.getParameterTypes();
+
+    // 获取参数列表上的注解
     final Annotation[][] paramAnnotations = method.getParameterAnnotations();
+
+    // 该集合用于记录参数索引与参数名称的对应关系
     final SortedMap<Integer, String> map = new TreeMap<>();
     int paramCount = paramAnnotations.length;
     // get names from @Param annotations
     for (int paramIndex = 0; paramIndex < paramCount; paramIndex++) {
       if (isSpecialParameter(paramTypes[paramIndex])) {
         // skip special parameters
+        // RowBounds or ResultHandler 跳过
         continue;
       }
       String name = null;
@@ -74,6 +75,7 @@ public class ParamNameResolver {
           break;
         }
       }
+      // 先读取@param 上的 name, 如果没有的话, 就读取参数名
       if (name == null) {
         // @Param was not specified.
         if (useActualParamName) {

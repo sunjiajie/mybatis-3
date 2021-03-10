@@ -15,15 +15,15 @@
  */
 package org.apache.ibatis.mapping;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Clinton Begin
@@ -31,12 +31,28 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 public class ResultMapping {
 
   private Configuration configuration;
+
+  /**
+   * java 字段
+   */
   private String property;
+
+  /**
+   * 列名
+   */
   private String column;
   private Class<?> javaType;
   private JdbcType jdbcType;
   private TypeHandler<?> typeHandler;
+
+  /**
+   * 嵌套的 <resultMap> 的 id
+   */
   private String nestedResultMapId;
+
+  /**
+   * 嵌套的 <select> 的 id
+   */
   private String nestedQueryId;
   private Set<String> notNullColumns;
   private String columnPrefix;

@@ -5,6 +5,7 @@
 
 <mapper namespace="org.apache.ibatis.sjj.UserMapper">
 
+
   <sql id="userAllField">
     id,create_time,name,password,phone,nick_name
   </sql>

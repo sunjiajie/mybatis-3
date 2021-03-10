@@ -15,12 +15,12 @@
  */
 package org.apache.ibatis.cache;
 
+import org.apache.ibatis.reflection.ArrayUtil;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
-
-import org.apache.ibatis.reflection.ArrayUtil;
 
 /**
  * @author Clinton Begin
@@ -45,12 +45,31 @@ public class CacheKey implements Cloneable, Serializable {
   private static final int DEFAULT_MULTIPLIER = 37;
   private static final int DEFAULT_HASHCODE = 17;
 
+  /**
+   * 参与计算 hashcode ，默认位是 37
+   */
   private final int multiplier;
+
+  /**
+   * CacheKey 对象的 hashcode ，初始位是 17
+   */
   private int hashcode;
+
+  /**
+   * 校验和
+   */
   private long checksum;
+
+  /**
+   * updateList 的个数
+   */
   private int count;
   // 8/21/2017 - Sonarlint flags this as needing to be marked transient. While true if content is not serializable, this
   // is not always true and thus should not be marked transient.
+
+  /**
+   * 由该集合中的所有对象共同决定两 个 CacheKey 是否相同
+   */
   private List<Object> updateList;
 
   public CacheKey() {

@@ -26,6 +26,12 @@
 
     </settings>
 
+  <plugins>
+    <plugin interceptor="org.apache.ibatis.sjj.ExamplePlugin">
+      <property name="testProp" value="111"/>
+    </plugin>
+  </plugins>
+
 
     <environments default="development">
         <environment id="development">
